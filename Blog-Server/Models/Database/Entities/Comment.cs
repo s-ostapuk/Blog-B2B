@@ -1,4 +1,6 @@
-﻿namespace Blog_Server.Models.Database.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Blog_Server.Models.Database.Entities
 {
     public class Comment
     {
@@ -6,8 +8,10 @@
         public string CommentText { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public string Author { get; set; } = string.Empty;
 
         public int PostId { get; set; }
+        [JsonIgnore]
         public BlogPost Post { get; set; } = null!;
     }
 }

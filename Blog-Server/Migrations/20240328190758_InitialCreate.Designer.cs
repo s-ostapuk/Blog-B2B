@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blog_Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240328081025_InitialCreate")]
+    [Migration("20240328190758_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -47,7 +47,12 @@ namespace Blog_Server.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("BlogPosts");
                 });
@@ -59,6 +64,10 @@ namespace Blog_Server.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CommentText")
                         .IsRequired()
@@ -80,6 +89,42 @@ namespace Blog_Server.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("Blog_Server.Models.Database.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Blog_Server.Models.Database.Entities.BlogPost", b =>
+                {
+                    b.HasOne("Blog_Server.Models.Database.Entities.User", "User")
+                        .WithMany("BlogPosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Blog_Server.Models.Database.Entities.Comment", b =>
                 {
                     b.HasOne("Blog_Server.Models.Database.Entities.BlogPost", "Post")
@@ -94,6 +139,11 @@ namespace Blog_Server.Migrations
             modelBuilder.Entity("Blog_Server.Models.Database.Entities.BlogPost", b =>
                 {
                     b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("Blog_Server.Models.Database.Entities.User", b =>
+                {
+                    b.Navigation("BlogPosts");
                 });
 #pragma warning restore 612, 618
         }

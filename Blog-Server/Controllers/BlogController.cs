@@ -1,4 +1,5 @@
 ﻿using Blog_Server.Models.Database;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,13 +10,13 @@ namespace Blog_Server.Controllers
     [ApiController]
     public class BlogController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        public BlogController(ApplicationDbContext context) {
-            _context = context;
-        }
+        //private readonly ApplicationDbContext _context;
+        //public BlogController(ApplicationDbContext context) {
+        //    _context = context;
+        //}
 
         [HttpGet]
-        public async Task<ActionResult<string>> GetAllPosts()
+        public IActionResult GetAllPosts()
         {
             return Ok("Test");
         }

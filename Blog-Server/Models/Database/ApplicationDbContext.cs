@@ -12,5 +12,6 @@ namespace Blog_Server.Models.Database
         }
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
