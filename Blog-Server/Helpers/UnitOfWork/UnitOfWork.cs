@@ -18,7 +18,11 @@ namespace Blog_Server.Helpers.UnitOfWork
         public IBlogPostsRepository BlogPostsRepository => blogPostsRepository = blogPostsRepository ?? new BlogPostsRepository(_context);
         public IUsersRepository UsersRepository => usersRepository = usersRepository ?? new UsersRepository(_context);
         public ICommentsRepository CommentsRepository => commentsRepository = commentsRepository ?? new CommentsRepository(_context);
-
+        
+        /// <summary>
+        /// Apply repository changes
+        /// </summary>
+        /// <returns></returns>
         public async Task CompleteAsync()
         {
             await _context.SaveChangesAsync();

@@ -7,16 +7,12 @@ namespace Blog_Server.Helpers.Repositories
 {
     public class CommentsRepository : BaseRepository<Comment>, ICommentsRepository
     {
-        #region Properties
         private readonly ApplicationDbContext _context;
-        #endregion
 
-        #region Constructors
         public CommentsRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
-        #endregion
 
         public async Task<List<Comment>> GetPostCommentsByPostIdAsync(int postId)
         {

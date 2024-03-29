@@ -6,14 +6,8 @@ using Blog_Server.Models.Database;
 using Blog_Server.Models.JwtModels;
 using Blog_Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.HttpLogging;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Configuration;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 

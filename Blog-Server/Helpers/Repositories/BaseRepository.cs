@@ -6,20 +6,20 @@ namespace Blog_Server.Helpers.Repositories
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
-        #region Properties
         private readonly ApplicationDbContext _context;
         private readonly DbSet<TEntity> dbSet;
-        #endregion
 
-        #region Constructors
         public BaseRepository(ApplicationDbContext context)
         {
             _context = context;
             dbSet = context.Set<TEntity>();
         }
-        #endregion
 
-        #region Virtual Methods
+        /// <summary>
+        /// Collection item insertion
+        /// </summary>
+        /// <param name="entity">Entity item</param>
+        /// <returns>Inserted item</returns>
         public virtual async Task<TEntity?> InsertAsync(TEntity entity)
         {
             try
@@ -32,8 +32,13 @@ namespace Blog_Server.Helpers.Repositories
             }
             return entity;
         }
-
-        public virtual async Task<TEntity?> UpdateAsync(TEntity entityToUpdate, bool disableChangeTracker, bool saveChanges = true)
+        /// <summary>
+        /// Collection item update
+        /// </summary>
+        /// <param name="entityToUpdate">Updatable entity</param>
+        /// <param name="disableChangeTracker">Change tracker value</param>
+        /// <returns>Updated entity</returns>
+        public virtual async Task<TEntity?> UpdateAsync(TEntity entityToUpdate, bool disableChangeTracker)
         {
             var changeTrackerStatus = _context.ChangeTracker.AutoDetectChangesEnabled;
 
@@ -56,11 +61,13 @@ namespace Blog_Server.Helpers.Repositories
             _context.ChangeTracker.AutoDetectChangesEnabled = changeTrackerStatus;
             return entityToUpdate;
         }
-
+        /// <summary>
+        /// Getting all items from collection
+        /// </summary>
+        /// <returns>Requested entity List</returns>
         public virtual async Task<List<TEntity>?> GetAllItemsAsync()
         {
             return await _context.Set<TEntity>().ToListAsync();
         }
-        #endregion
     }
 }

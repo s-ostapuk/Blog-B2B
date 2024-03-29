@@ -5,12 +5,17 @@ namespace Blog_Server.Helpers
 {
     public class HashHelper
     {
-        public static string getSHA256(string input)
+        /// <summary>
+        /// Sha256 password encryption
+        /// </summary>
+        /// <param name="rawString">Raw password string</param>
+        /// <returns>Encrypted password string</returns>
+        public static string getSHA256(string rawString)
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {
                 // ComputeHash - returns byte array
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawString));
 
                 // Convert byte array to a string
                 StringBuilder builder = new StringBuilder();

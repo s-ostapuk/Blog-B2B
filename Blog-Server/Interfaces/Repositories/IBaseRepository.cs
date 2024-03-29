@@ -3,7 +3,7 @@
     public interface IBaseRepository<TEntity> where TEntity : class
     {
         Task<TEntity?> InsertAsync(TEntity entity);
-        Task<TEntity?> UpdateAsync(TEntity entityToUpdate, bool disableChangeTracker, bool saveChanges = true);
+        Task<TEntity?> UpdateAsync(TEntity entityToUpdate, bool disableChangeTracker);
         Task<List<TEntity>?> GetAllItemsAsync();
     }
 }
