@@ -16,7 +16,7 @@ namespace Blog_Server.Repositories
 
         public async Task<BlogPost?> GetPostByIdAsync(int id)
         {
-            var post = await _context.BlogPosts.FirstOrDefaultAsync(p => p.Id == id);
+            var post = await _context.BlogPosts.Include(p=>p.Comments).FirstOrDefaultAsync(p => p.Id == id);
             return post;
         }
 

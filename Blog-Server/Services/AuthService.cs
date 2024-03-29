@@ -37,14 +37,14 @@ namespace Blog_Server.Services
         {
             var response = new BaseResponseModel();
 
-            if (requestModel == null || string.IsNullOrEmpty(requestModel.Login) || string.IsNullOrEmpty(requestModel.Password))
+            if (requestModel is null || string.IsNullOrEmpty(requestModel.Login) || string.IsNullOrEmpty(requestModel.Password))
             {
                 response.Errors.Add("Login and Password is required");
                 return response;
             }
 
             var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(requestModel.Login);
-            if (user == null)
+            if (user is null)
             {
                 response.Errors.Add("User not found");
                 return response;
@@ -81,14 +81,14 @@ namespace Blog_Server.Services
             }
 
             var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(requestModel.Login);
-            if (user != null)
+            if (user is not null)
             {
                 response.Errors.Add("User already exists");
                 return response;
             }
 
             user = await _unitOfWork.UsersRepository.GetUserByEmailAsync(requestModel.Email);
-            if (user != null)
+            if (user is not null)
             {
                 response.Errors.Add("Email already taken");
                 return response;

@@ -1,4 +1,6 @@
-﻿namespace Blog_Server.Models.DtoModels
+﻿using Blog_Server.Database.Entities;
+
+namespace Blog_Server.Models.DtoModels
 {
     public class BlogPostDto
     {
@@ -9,5 +11,6 @@
         public DateTime UpdatedAt { get; set; }
 
         public int UserId { get; set; }
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

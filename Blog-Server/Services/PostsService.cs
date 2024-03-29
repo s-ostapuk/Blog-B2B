@@ -6,6 +6,9 @@ using Blog_Server.Models.DtoModels;
 using Blog_Server.Models.RequestModels;
 using Blog_Server.Models.ResponseModels;
 using Blog_Server.Models.ResponseModels.PostsResponseModels;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.Design;
 
 namespace Blog_Server.Services
 {
@@ -66,7 +69,7 @@ namespace Blog_Server.Services
             };
 
             comment = await _unitOfWork.CommentsRepository.InsertAsync(comment);
-            if (comment is null) 
+            if (comment is null)
             {
                 response.Errors.Add("Insertion error");
                 return response;
@@ -75,7 +78,7 @@ namespace Blog_Server.Services
             {
                 await _unitOfWork.CompleteAsync();
             }
-            catch (Exception ex) 
+            catch
             {
                 response.Errors.Add("Saving error");
                 return response;
@@ -119,9 +122,9 @@ namespace Blog_Server.Services
                 await _unitOfWork.CommentsRepository.UpdateAsync(comment, true);
                 await _unitOfWork.CompleteAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                response.Errors.Add(ex.Message);
+                response.Errors.Add("Update error");
                 return response;
             }
 
@@ -157,9 +160,147 @@ namespace Blog_Server.Services
                 await _unitOfWork.CommentsRepository.RemovePostCommentByPostIdAndIdAsync(postId, commentId);
                 await _unitOfWork.CompleteAsync();
             }
-            catch (Exception ex)
+            catch 
             {
                 response.Errors.Add("Deletion error");
+                return response;
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponseModel> CreateNewPostAsync(CreateNewPostRequestModel requestModel, string username)
+        {
+            var response = new BaseResponseModel();
+
+            if (requestModel is null || string.IsNullOrEmpty(requestModel.Title) || string.IsNullOrEmpty(requestModel.Content))
+            {
+                response.Errors.Add("Request model is invalid");
+                return response;
+            }
+            if (string.IsNullOrEmpty(username))
+            {
+                response.Errors.Add("Invalid user credentials");
+                return response;
+            }
+
+            var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(username);
+            if (user is null)
+            {
+                response.Errors.Add("User already exists");
+                return response;
+            }
+
+            var post = new BlogPost
+            {
+                Title = requestModel.Title,
+                Content = requestModel.Content,
+                CreatedAt = DateTime.UtcNow,
+                UserId = user.Id
+            };
+
+            post = await _unitOfWork.BlogPostsRepository.InsertAsync(post);
+
+            if (post is null)
+            {
+                response.Errors.Add("Insertion error");
+                return response;
+            }
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch
+            {
+                response.Errors.Add("Saving error");
+                return response;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponseModel> DeletePostAsync(int postId, string username)
+        {
+            var response = new BaseResponseModel();
+
+            if (string.IsNullOrEmpty(username))
+            {
+                response.Errors.Add("Invalid user credentials");
+                return response;
+            }
+            var post = await _unitOfWork.BlogPostsRepository.GetAsync(postId);
+            
+            if (post is null)
+            {
+                response.Errors.Add("Post not found");
+                return response;
+            }
+            var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(username);
+            if (user is null || post.UserId != user.Id)
+            {
+                response.Errors.Add("Invalid credentials");
+                return response;
+            }
+            try
+            {
+                await _unitOfWork.BlogPostsRepository.RemovePostByIdAsync(postId);
+                await _unitOfWork.CompleteAsync();
+            }
+            catch
+            {
+                response.Errors.Add("Deletion error");
+                return response;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponseModel> UpdatePostAsync(UpdatePostRequestModel requestModel, int postId, string username)
+        {
+            var response = new BaseResponseModel();
+
+            if (requestModel is null || string.IsNullOrEmpty(requestModel.Title) || string.IsNullOrEmpty(requestModel.Content))
+            {
+                response.Errors.Add("Request model is invalid");
+                return response;
+            }
+
+            if (string.IsNullOrEmpty(username))
+            {
+                response.Errors.Add("Invalid user credentials");
+                return response;
+            }
+
+            var post = await _unitOfWork.BlogPostsRepository.GetAsync(postId);
+            if (post is null)
+            {
+                response.Errors.Add("Post not found");
+                return response;
+            }
+            var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(username);
+            if (user is null || post.UserId != user.Id)
+            {
+                response.Errors.Add("Invalid credentials");
+                return response;
+            }
+
+            if (post.UserId != user.Id)
+            {
+                response.Errors.Add("Invalid user credentials");
+                return response;
+            }
+
+            post.UpdatedAt = DateTime.UtcNow;
+            post.Title = requestModel.Title;
+            post.Content = requestModel.Content;
+
+            try
+            {
+                await _unitOfWork.BlogPostsRepository.UpdateAsync(post, true);
+                await _unitOfWork.CompleteAsync();
+            }
+            catch
+            {
+                response.Errors.Add("Update error");
                 return response;
             }
 
