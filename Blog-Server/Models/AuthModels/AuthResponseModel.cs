@@ -2,7 +2,7 @@
 
 namespace Blog_Server.Models.AuthModels
 {
-    public class AuthResponseModel : BaseResponseModel
+    public class AuthResponseDataModel 
     {
         public string AccessToken { get; set; } = string.Empty;
     }

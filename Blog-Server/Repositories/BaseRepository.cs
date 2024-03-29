@@ -14,7 +14,19 @@ namespace Blog_Server.Repositories
             _context = context;
             dbSet = context.Set<TEntity>();
         }
-
+        public virtual async Task<TEntity?> GetAsync(int id)
+        {
+            TEntity? entity = null;
+            try
+            {
+                entity = await _context.Set<TEntity>().FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            return entity;
+        }
         /// <summary>
         /// Collection item insertion
         /// </summary>

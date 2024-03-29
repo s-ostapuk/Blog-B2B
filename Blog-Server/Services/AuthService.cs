@@ -33,9 +33,9 @@ namespace Blog_Server.Services
         #endregion
 
         #region Public methods
-        public async Task<AuthResponseModel> GetTokenAsync(AuthRequestModel requestModel)
+        public async Task<BaseResponseModel> GetTokenAsync(AuthRequestModel requestModel)
         {
-            var response = new AuthResponseModel();
+            var response = new BaseResponseModel();
 
             if (requestModel == null || string.IsNullOrEmpty(requestModel.Login) || string.IsNullOrEmpty(requestModel.Password))
             {
@@ -56,7 +56,8 @@ namespace Blog_Server.Services
                 return response;
             }
 
-            var claims = new List<Claim> { new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login) };
+            var claims = new List<Claim> { new Claim(
+                ClaimTypes.NameIdentifier, user.Login) };
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
             var now = DateTime.UtcNow;
@@ -66,7 +67,7 @@ namespace Blog_Server.Services
                 signingCredentials: issuerSigningCredentials);
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
-            return new AuthResponseModel() { AccessToken = encodedJwt };
+            return new BaseResponseModel() { Data = new AuthResponseDataModel { AccessToken = encodedJwt } };
         }
 
         public async Task<BaseResponseModel> RegisterNewUserAsync(AuthSignUpRequestModel requestModel)
@@ -85,7 +86,7 @@ namespace Blog_Server.Services
                 response.Errors.Add("User already exists");
                 return response;
             }
-           
+
             user = await _unitOfWork.UsersRepository.GetUserByEmailAsync(requestModel.Email);
             if (user != null)
             {
@@ -102,7 +103,7 @@ namespace Blog_Server.Services
 
             var newUser = await _unitOfWork.UsersRepository.InsertAsync(user);
 
-            if(newUser is null)
+            if (newUser is null)
             {
                 response.Errors.Add("User creation error");
                 return response;

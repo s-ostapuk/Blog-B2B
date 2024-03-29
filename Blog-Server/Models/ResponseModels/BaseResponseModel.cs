@@ -5,6 +5,7 @@ namespace Blog_Server.Models.ResponseModels
 {
     public class BaseResponseModel
     {
+        public object? Data { get; set; } = null;
         public bool IsSuccess
         {
             get

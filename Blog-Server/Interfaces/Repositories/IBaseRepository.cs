@@ -2,6 +2,7 @@
 {
     public interface IBaseRepository<TEntity> where TEntity : class
     {
+        Task<TEntity?> GetAsync(int id);
         Task<TEntity?> InsertAsync(TEntity entity);
         Task<TEntity?> UpdateAsync(TEntity entityToUpdate, bool disableChangeTracker);
         Task<List<TEntity>?> GetAllItemsAsync();

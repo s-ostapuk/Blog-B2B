@@ -5,7 +5,7 @@ namespace Blog_Server.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<AuthResponseModel> GetTokenAsync(AuthRequestModel requestModel);
+        Task<BaseResponseModel> GetTokenAsync(AuthRequestModel requestModel);
         Task<BaseResponseModel> RegisterNewUserAsync(AuthSignUpRequestModel requestModel);
     }
 }
