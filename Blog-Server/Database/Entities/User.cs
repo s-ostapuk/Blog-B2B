@@ -1,4 +1,4 @@
-﻿namespace Blog_Server.Models.Database.Entities
+﻿namespace Blog_Server.Database.Entities
 {
     public class User
     {

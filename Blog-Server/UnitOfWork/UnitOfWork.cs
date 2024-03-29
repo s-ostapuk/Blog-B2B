@@ -1,9 +1,9 @@
-﻿using Blog_Server.Helpers.Repositories;
+﻿using Blog_Server.Repositories;
 using Blog_Server.Interfaces.Repositories;
 using Blog_Server.Interfaces.UnitOfWork;
-using Blog_Server.Models.Database;
+using Blog_Server.Database;
 
-namespace Blog_Server.Helpers.UnitOfWork
+namespace Blog_Server.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
@@ -18,7 +18,7 @@ namespace Blog_Server.Helpers.UnitOfWork
         public IBlogPostsRepository BlogPostsRepository => blogPostsRepository = blogPostsRepository ?? new BlogPostsRepository(_context);
         public IUsersRepository UsersRepository => usersRepository = usersRepository ?? new UsersRepository(_context);
         public ICommentsRepository CommentsRepository => commentsRepository = commentsRepository ?? new CommentsRepository(_context);
-        
+
         /// <summary>
         /// Apply repository changes
         /// </summary>

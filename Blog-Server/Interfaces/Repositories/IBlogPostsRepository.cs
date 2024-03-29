@@ -1,4 +1,4 @@
-﻿using Blog_Server.Models.Database.Entities;
+﻿using Blog_Server.Database.Entities;
 
 namespace Blog_Server.Interfaces.Repositories
 {

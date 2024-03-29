@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
-using System.Reflection.Metadata;
-
-namespace Blog_Server.Models.Database.Entities
+﻿namespace Blog_Server.Models.DtoModels
 {
-    public class BlogPost
+    public class BlogPostDto
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
@@ -12,9 +9,5 @@ namespace Blog_Server.Models.Database.Entities
         public DateTime UpdatedAt { get; set; }
 
         public int UserId { get; set; }
-        public User User { get; set; } = null!;
-
-        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
-
     }
 }

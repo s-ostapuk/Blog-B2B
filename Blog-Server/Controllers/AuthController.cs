@@ -23,7 +23,7 @@ namespace Blog_Server.Controllers
         }
 
         [HttpPost]
-        [Route("SignUp")]
+        [Route("signup")]
         public async Task<BaseResponseModel> RegisterNewUser([FromBody] AuthSignUpRequestModel requestModel)
         {
             return await _authService.RegisterNewUserAsync(requestModel);

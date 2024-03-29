@@ -1,16 +1,17 @@
-using Blog_Server.Helpers.UnitOfWork;
+using Blog_Server.Database;
+using Blog_Server.Helpers.AutoMapper;
 using Blog_Server.Interfaces.Services;
 using Blog_Server.Interfaces.UnitOfWork;
 using Blog_Server.Middleware;
-using Blog_Server.Models.Database;
 using Blog_Server.Models.JwtModels;
 using Blog_Server.Services;
+using Blog_Server.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-var builder = WebApplication.CreateBuilder(args);
 
+var builder = WebApplication.CreateBuilder(args);
 
 var jwtOptions = builder.Configuration
     .GetSection("JwtOptions")
@@ -48,7 +49,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IAuthService, AuthService>();
-
+builder.Services.AddTransient<IPostsService, PostsService>();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

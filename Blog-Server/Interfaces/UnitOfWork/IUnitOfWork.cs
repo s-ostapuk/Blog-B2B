@@ -1,6 +1,4 @@
 ﻿using Blog_Server.Interfaces.Repositories;
-using Blog_Server.Models.Database;
-
 namespace Blog_Server.Interfaces.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable

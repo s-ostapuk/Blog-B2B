@@ -1,8 +1,8 @@
-﻿using Blog_Server.Interfaces.Repositories;
-using Blog_Server.Models.Database;
+﻿using Blog_Server.Database;
+using Blog_Server.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Blog_Server.Helpers.Repositories
+namespace Blog_Server.Repositories
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {

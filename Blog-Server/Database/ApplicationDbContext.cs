@@ -1,12 +1,12 @@
-﻿using Blog_Server.Models.Database.Entities;
+﻿using Blog_Server.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 
-namespace Blog_Server.Models.Database
+namespace Blog_Server.Database
 {
     public class ApplicationDbContext : DbContext
     {
-       
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }

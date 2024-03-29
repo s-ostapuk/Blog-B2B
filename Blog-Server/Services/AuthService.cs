@@ -1,7 +1,5 @@
 ﻿using Blog_Server.Interfaces.Services;
-using Blog_Server.Interfaces.UnitOfWork;
 using Blog_Server.Models.AuthModels;
-using Blog_Server.Models.Database.Entities;
 using Blog_Server.Models.JwtModels;
 using Blog_Server.Helpers;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Blog_Server.Models.ResponseModels;
+using Blog_Server.Interfaces.UnitOfWork;
+using Blog_Server.Database.Entities;
 
 namespace Blog_Server.Services
 {

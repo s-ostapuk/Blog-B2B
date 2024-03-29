@@ -1,5 +1,5 @@
-﻿using Blog_Server.Models.AuthModels;
-using Blog_Server.Models.Database.Entities;
+﻿using Blog_Server.Database.Entities;
+using Blog_Server.Models.AuthModels;
 
 namespace Blog_Server.Interfaces.Repositories
 {
