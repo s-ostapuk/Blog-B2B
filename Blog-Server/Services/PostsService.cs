@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Blog_Server.Database.Entities;
+using Blog_Server.Exceptions;
 using Blog_Server.Interfaces.Services;
 using Blog_Server.Interfaces.UnitOfWork;
 using Blog_Server.Models.DtoModels;
@@ -42,22 +43,10 @@ namespace Blog_Server.Services
         {
             var response = new BaseResponseModel();
 
-            if (requestModel is null || string.IsNullOrEmpty(requestModel.Title) || string.IsNullOrEmpty(requestModel.Content))
-            {
-                response.Errors.Add("Request model is invalid");
-                return response;
-            }
-            if (string.IsNullOrEmpty(username))
-            {
-                response.Errors.Add("Invalid user credentials");
-                return response;
-            }
-
             var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(username);
             if (user is null)
             {
-                response.Errors.Add("User already exists");
-                return response;
+                throw new AppException("User not found");
             }
 
             var post = new BlogPost
@@ -68,22 +57,14 @@ namespace Blog_Server.Services
                 UserId = user.Id
             };
 
-            post = await _unitOfWork.BlogPostsRepository.InsertAsync(post);
-
-            if (post is null)
-            {
-                response.Errors.Add("Insertion error");
-                return response;
-            }
-
             try
             {
+                await _unitOfWork.BlogPostsRepository.InsertAsync(post);
                 await _unitOfWork.CompleteAsync();
             }
             catch
             {
-                response.Errors.Add("Saving error");
-                return response;
+                throw new AppException("Post saving error");
             }
             return response;
         }
@@ -92,23 +73,15 @@ namespace Blog_Server.Services
         {
             var response = new BaseResponseModel();
 
-            if (string.IsNullOrEmpty(username))
-            {
-                response.Errors.Add("Invalid user credentials");
-                return response;
-            }
             var post = await _unitOfWork.BlogPostsRepository.GetAsync(postId);
-
             if (post is null)
             {
-                response.Errors.Add("Post not found");
-                return response;
+                throw new AppException("Post not found");
             }
             var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(username);
             if (user is null || post.UserId != user.Id)
             {
-                response.Errors.Add("Invalid credentials");
-                return response;
+                throw new AppException("Invalid credentials");
             }
             try
             {
@@ -117,8 +90,7 @@ namespace Blog_Server.Services
             }
             catch
             {
-                response.Errors.Add("Deletion error");
-                return response;
+                throw new AppException("Post deletion error");
             }
             return response;
         }
@@ -127,35 +99,20 @@ namespace Blog_Server.Services
         {
             var response = new BaseResponseModel();
 
-            if (requestModel is null || string.IsNullOrEmpty(requestModel.Title) || string.IsNullOrEmpty(requestModel.Content))
-            {
-                response.Errors.Add("Request model is invalid");
-                return response;
-            }
-
-            if (string.IsNullOrEmpty(username))
-            {
-                response.Errors.Add("Invalid user credentials");
-                return response;
-            }
-
             var post = await _unitOfWork.BlogPostsRepository.GetAsync(postId);
             if (post is null)
             {
-                response.Errors.Add("Post not found");
-                return response;
+                throw new AppException("Post not found");
             }
             var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(username);
             if (user is null || post.UserId != user.Id)
             {
-                response.Errors.Add("Invalid credentials");
-                return response;
+                throw new AppException("Invalid credentials");
             }
 
             if (post.UserId != user.Id)
             {
-                response.Errors.Add("Invalid user credentials");
-                return response;
+                throw new AppException("Invalid user credentials");
             }
 
             post.UpdatedAt = DateTime.UtcNow;
@@ -169,140 +126,7 @@ namespace Blog_Server.Services
             }
             catch
             {
-                response.Errors.Add("Update error");
-                return response;
-            }
-
-            return response;
-        }
-
-        public async Task<BaseResponseModel> GetCommentsByPostIdAsync(int postId)
-        {
-            return new BaseResponseModel()
-            {
-                Data = new GetCommentsByPostIdModel { Comments = _mapper.Map<List<CommentDto>>(await _unitOfWork.CommentsRepository.GetPostCommentsByPostIdAsync(postId)) }
-            };
-        }
-
-        public async Task<BaseResponseModel> CreateNewPostCommentAsync(CreateNewPostCommentRequestModel requestModel, int postId, string username)
-        {
-            var response = new BaseResponseModel();
-            if (requestModel is null || string.IsNullOrEmpty(requestModel.CommentText))
-            {
-                response.Errors.Add("Request model is invalid");
-                return response;
-            }
-
-            if (string.IsNullOrEmpty(username))
-            {
-                response.Errors.Add("Invalid user credentials");
-                return response;
-            }
-
-            var comment = new Comment
-            {
-                CommentText = requestModel.CommentText,
-                CreatedAt = DateTime.UtcNow,
-                PostId = postId,
-                Author = username
-            };
-
-            comment = await _unitOfWork.CommentsRepository.InsertAsync(comment);
-            if (comment is null)
-            {
-                response.Errors.Add("Insertion error");
-                return response;
-            }
-            try
-            {
-                await _unitOfWork.CompleteAsync();
-            }
-            catch
-            {
-                response.Errors.Add("Saving error");
-                return response;
-            }
-            return response;
-        }
-
-        public async Task<BaseResponseModel> UpdatePostCommentAsync(UpdatePostCommentRequestModel requestModel, int postId, int commentId, string username)
-        {
-            var response = new BaseResponseModel();
-
-            if (requestModel is null || string.IsNullOrEmpty(requestModel.CommentText))
-            {
-                response.Errors.Add("Request model is invalid");
-                return response;
-            }
-
-            if (string.IsNullOrEmpty(username))
-            {
-                response.Errors.Add("Invalid user credentials");
-                return response;
-            }
-
-            var comment = await _unitOfWork.CommentsRepository.GetAsync(commentId);
-            if (comment is null)
-            {
-                response.Errors.Add("Comment not found");
-                return response;
-            }
-
-            if (comment.PostId != postId || comment.Author != username)
-            {
-                response.Errors.Add("Invalid comment data or user credentials");
-                return response;
-            }
-
-            comment.CommentText = requestModel.CommentText;
-            comment.UpdatedAt = DateTime.UtcNow;
-            try
-            {
-                await _unitOfWork.CommentsRepository.UpdateAsync(comment, true);
-                await _unitOfWork.CompleteAsync();
-            }
-            catch
-            {
-                response.Errors.Add("Update error");
-                return response;
-            }
-
-            return response;
-
-        }
-
-        public async Task<BaseResponseModel> DeletePostCommentAsync(int postId, int commentId, string username)
-        {
-            var response = new BaseResponseModel();
-
-            if (string.IsNullOrEmpty(username))
-            {
-                response.Errors.Add("Invalid user credentials");
-                return response;
-            }
-
-            var comment = await _unitOfWork.CommentsRepository.GetAsync(commentId);
-            if (comment is null)
-            {
-                response.Errors.Add("Comment not found");
-                return response;
-            }
-
-            if (comment.PostId != postId || comment.Author != username)
-            {
-                response.Errors.Add("Invalid comment data or user credentials");
-                return response;
-            }
-
-            try
-            {
-                await _unitOfWork.CommentsRepository.RemovePostCommentByPostIdAndIdAsync(postId, commentId);
-                await _unitOfWork.CompleteAsync();
-            }
-            catch 
-            {
-                response.Errors.Add("Deletion error");
-                return response;
+                throw new AppException("Post update error");
             }
 
             return response;

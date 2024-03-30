@@ -1,6 +1,5 @@
 ﻿using Blog_Server.Database.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 namespace Blog_Server.Database
 {

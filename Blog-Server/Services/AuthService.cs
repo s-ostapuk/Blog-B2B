@@ -9,6 +9,7 @@ using System.Text;
 using Blog_Server.Models.ResponseModels;
 using Blog_Server.Interfaces.UnitOfWork;
 using Blog_Server.Database.Entities;
+using Blog_Server.Exceptions;
 
 namespace Blog_Server.Services
 {
@@ -37,23 +38,11 @@ namespace Blog_Server.Services
         {
             var response = new BaseResponseModel();
 
-            if (requestModel is null || string.IsNullOrEmpty(requestModel.Login) || string.IsNullOrEmpty(requestModel.Password))
-            {
-                response.Errors.Add("Login and Password is required");
-                return response;
-            }
-
             var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(requestModel.Login);
-            if (user is null)
+            
+            if (user is null || !CheckUserPassword(requestModel.Password, user))
             {
-                response.Errors.Add("User not found");
-                return response;
-            }
-
-            if (!CheckUserPassword(requestModel.Password, user))
-            {
-                response.Errors.Add("Password is invalid");
-                return response;
+                throw new AppException("Invalid login or password");
             }
 
             var claims = new List<Claim> { new Claim(
@@ -74,24 +63,16 @@ namespace Blog_Server.Services
         {
             var response = new BaseResponseModel();
 
-            if (requestModel is null || string.IsNullOrEmpty(requestModel.Login) || string.IsNullOrEmpty(requestModel.Password))
-            {
-                response.Errors.Add("Login and Password is required");
-                return response;
-            }
-
             var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(requestModel.Login);
             if (user is not null)
             {
-                response.Errors.Add("User already exists");
-                return response;
+                throw new AppException("Same login already exists");
             }
 
             user = await _unitOfWork.UsersRepository.GetUserByEmailAsync(requestModel.Email);
             if (user is not null)
             {
-                response.Errors.Add("Email already taken");
-                return response;
+                throw new AppException("Email already taken");
             }
 
             user = new User
@@ -101,22 +82,14 @@ namespace Blog_Server.Services
                 PasswordHash = HashHelper.getSHA256(requestModel.Password)
             };
 
-            var newUser = await _unitOfWork.UsersRepository.InsertAsync(user);
-
-            if (newUser is null)
-            {
-                response.Errors.Add("User creation error");
-                return response;
-            }
-
             try
             {
+                await _unitOfWork.UsersRepository.InsertAsync(user);
                 await _unitOfWork.CompleteAsync();
             }
             catch
             {
-                response.Errors.Add("User saving error");
-                return response;
+                throw new AppException("User saving error");
             }
 
             return response;

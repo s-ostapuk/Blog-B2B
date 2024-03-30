@@ -1,10 +1,12 @@
 ﻿using Blog_Server.Database;
+using Blog_Server.Exceptions;
+using Blog_Server.Interfaces;
 using Blog_Server.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog_Server.Repositories
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class, IEntity
     {
         private readonly ApplicationDbContext _context;
         private readonly DbSet<TEntity> dbSet;
@@ -19,11 +21,11 @@ namespace Blog_Server.Repositories
             TEntity? entity = null;
             try
             {
-                entity = await _context.Set<TEntity>().FindAsync(id);
+                entity = await _context.Set<TEntity>().SingleOrDefaultAsync(x => x.Id == id);
             }
-            catch (Exception ex)
+            catch
             {
-                return null;
+                throw new AppException("Pulling identity error");
             }
             return entity;
         }
@@ -34,14 +36,7 @@ namespace Blog_Server.Repositories
         /// <returns>Inserted item</returns>
         public virtual async Task<TEntity?> InsertAsync(TEntity entity)
         {
-            try
-            {
-                await _context.Set<TEntity>().AddAsync(entity);
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            await _context.Set<TEntity>().AddAsync(entity);
             return entity;
         }
         /// <summary>

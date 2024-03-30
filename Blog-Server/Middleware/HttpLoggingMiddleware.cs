@@ -1,5 +1,4 @@
-﻿using Azure;
-using System.Text;
+﻿using System.Text;
 
 namespace Blog_Server.Middleware
 {

@@ -16,13 +16,11 @@ namespace Blog_Server.Repositories
 
         public async Task<User?> GetUserByLoginAsync(string login)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Login == login);
-            return user;
+            return await _context.Users.SingleOrDefaultAsync(u => u.Login == login);
         }
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            return user;
+            return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
         }
     }
 }

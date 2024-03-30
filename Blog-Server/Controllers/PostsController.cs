@@ -1,5 +1,5 @@
-﻿using Blog_Server.Interfaces.Services;
-using Blog_Server.Models.DtoModels;
+﻿using Blog_Server.Exceptions;
+using Blog_Server.Interfaces.Services;
 using Blog_Server.Models.RequestModels;
 using Blog_Server.Models.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,18 +13,20 @@ namespace Blog_Server.Controllers
     [Authorize]
     public class PostsController : ControllerBase
     {
-        private readonly IPostsService _blogService;
+        private readonly IPostsService _postsService;
+        private readonly ICommentsService _commentsService;
 
-        public PostsController(IPostsService blogService)
+        public PostsController(IPostsService postsService, ICommentsService commentsService)
         {
-            _blogService = blogService;
+            _postsService = postsService;
+            _commentsService = commentsService;
         }
         #region PostsEndpoints
         [HttpGet]
         [AllowAnonymous]
         public async Task<BaseResponseModel> GetAllPosts()
         {
-            return await _blogService.GetAllPostsAsync();
+            return await _postsService.GetAllPostsAsync();
         }
         
         [HttpGet]
@@ -32,31 +34,28 @@ namespace Blog_Server.Controllers
         [AllowAnonymous]
         public async Task<BaseResponseModel> GetPostById([FromRoute] int postId)
         {
-            return await _blogService.GetPostByIdAsync(postId);
+            return await _postsService.GetPostByIdAsync(postId);
         }
         
         [HttpPost]
         [Route("create")]
         public async Task<BaseResponseModel> CreateNewPost([FromBody] CreateNewPostRequestModel requestModel)
         {
-            var username = await GetUserLoginFromToken();
-            return await _blogService.CreateNewPostAsync(requestModel, username);
+            return await _postsService.CreateNewPostAsync(requestModel, GetUserLoginFromToken());
         }
         
         [HttpPut]
         [Route("{postId:maxlength(9)}")]
         public async Task<BaseResponseModel> UpdatePost([FromRoute] int postId, [FromBody] UpdatePostRequestModel requestModel)
         {
-            var username = await GetUserLoginFromToken();
-            return await _blogService.UpdatePostAsync(requestModel, postId, username);
+            return await _postsService.UpdatePostAsync(requestModel, postId, GetUserLoginFromToken());
         }
         
         [HttpDelete]
         [Route("{postId:maxlength(9)}")]
         public async Task<BaseResponseModel> DeletePost([FromRoute] int postId)
         {
-            var username = await GetUserLoginFromToken();
-            return await _blogService.DeletePostAsync(postId, username);
+            return await _postsService.DeletePostAsync(postId, GetUserLoginFromToken());
         }
         #endregion
         #region CommentsEndpoints
@@ -65,37 +64,34 @@ namespace Blog_Server.Controllers
         [AllowAnonymous]
         public async Task<BaseResponseModel> GetCommentsByPostId([FromRoute] int postId)
         {
-            return await _blogService.GetCommentsByPostIdAsync(postId);
+            return await _commentsService.GetCommentsByPostIdAsync(postId);
         }
 
         [HttpPost]
         [Route("{postId:maxlength(9)}/comments/create")]
         public async Task<BaseResponseModel> CreateNewPostComment([FromRoute] int postId, [FromBody] CreateNewPostCommentRequestModel requestModel)
         {
-            var username = await GetUserLoginFromToken();
-            return await _blogService.CreateNewPostCommentAsync(requestModel, postId, username);
+            return await _commentsService.CreateNewPostCommentAsync(requestModel, postId, GetUserLoginFromToken());
         }
 
         [HttpPut]
         [Route("{postId:maxlength(9)}/comments/{commentId:maxlength(6)}")]
         public async Task<BaseResponseModel> UpdatePostComment([FromRoute] int postId, [FromRoute] int commentId, [FromBody] UpdatePostCommentRequestModel requestModel)
         {
-            var username = await GetUserLoginFromToken();
-            return await _blogService.UpdatePostCommentAsync(requestModel, postId, commentId, username);
+            return await _commentsService.UpdatePostCommentAsync(requestModel, postId, commentId, GetUserLoginFromToken());
         }
 
         [HttpDelete]
         [Route("{postId:maxlength(9)}/comments/{commentId:maxlength(6)}")]
         public async Task<BaseResponseModel> DeletePostComment([FromRoute] int postId, [FromRoute] int commentId)
         {
-            var username = await GetUserLoginFromToken();
-            return await _blogService.DeletePostCommentAsync(postId, commentId, username);
+            return await _commentsService.DeletePostCommentAsync(postId, commentId, GetUserLoginFromToken());
         }
         #endregion
 
-        private async Task<string?> GetUserLoginFromToken()
+        private string GetUserLoginFromToken()
         {
-            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new AppException("Required claim doesn`t exist");
         }
     }
 }

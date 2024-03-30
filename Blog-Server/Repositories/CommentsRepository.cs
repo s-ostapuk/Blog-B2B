@@ -16,8 +16,7 @@ namespace Blog_Server.Repositories
 
         public async Task<List<Comment>> GetPostCommentsByPostIdAsync(int postId)
         {
-            var comments = await _context.Comments.Where(c => c.PostId == postId).ToListAsync();
-            return comments;
+            return await _context.Comments.Where(c => c.PostId == postId).ToListAsync();
         }
 
         public async Task<int> RemovePostCommentByPostIdAndIdAsync(int postId, int id)

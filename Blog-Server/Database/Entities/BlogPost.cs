@@ -1,12 +1,17 @@
-﻿using Microsoft.Extensions.Hosting;
-using System.Reflection.Metadata;
+﻿using Blog_Server.Interfaces;
+using Blog_Server.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blog_Server.Database.Entities
 {
-    public class BlogPost
+    public class BlogPost : IEntity
     {
         public int Id { get; set; }
+        [Required]
+        [MaxLength(ModelRequirements.MaxPostTitleLength)]
         public string Title { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(ModelRequirements.MaxPostContentLength)]
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

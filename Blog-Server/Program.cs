@@ -1,4 +1,5 @@
 using Blog_Server.Database;
+using Blog_Server.Exceptions;
 using Blog_Server.Helpers.AutoMapper;
 using Blog_Server.Interfaces.Services;
 using Blog_Server.Interfaces.UnitOfWork;
@@ -50,9 +51,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IPostsService, PostsService>();
+builder.Services.AddTransient<ICommentsService, CommentsService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-
+builder.Services.AddExceptionHandler<AppExceptionHandler>();
 var app = builder.Build();
+app.UseExceptionHandler(builder =>
+{
+
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

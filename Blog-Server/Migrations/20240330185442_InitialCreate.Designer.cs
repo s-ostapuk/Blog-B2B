@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blog_Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240328190758_InitialCreate")]
+    [Migration("20240330185442_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace Blog_Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Blog_Server.Models.Database.Entities.BlogPost", b =>
+            modelBuilder.Entity("Blog_Server.Database.Entities.BlogPost", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,14 +35,16 @@ namespace Blog_Server.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -57,7 +59,7 @@ namespace Blog_Server.Migrations
                     b.ToTable("BlogPosts");
                 });
 
-            modelBuilder.Entity("Blog_Server.Models.Database.Entities.Comment", b =>
+            modelBuilder.Entity("Blog_Server.Database.Entities.Comment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,13 +67,15 @@ namespace Blog_Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Author")
+                    b.Property<string>("AuthorLogin")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("CommentText")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -89,7 +93,7 @@ namespace Blog_Server.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Blog_Server.Models.Database.Entities.User", b =>
+            modelBuilder.Entity("Blog_Server.Database.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -103,7 +107,8 @@ namespace Blog_Server.Migrations
 
                     b.Property<string>("Login")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -114,9 +119,9 @@ namespace Blog_Server.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Blog_Server.Models.Database.Entities.BlogPost", b =>
+            modelBuilder.Entity("Blog_Server.Database.Entities.BlogPost", b =>
                 {
-                    b.HasOne("Blog_Server.Models.Database.Entities.User", "User")
+                    b.HasOne("Blog_Server.Database.Entities.User", "User")
                         .WithMany("BlogPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -125,9 +130,9 @@ namespace Blog_Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Blog_Server.Models.Database.Entities.Comment", b =>
+            modelBuilder.Entity("Blog_Server.Database.Entities.Comment", b =>
                 {
-                    b.HasOne("Blog_Server.Models.Database.Entities.BlogPost", "Post")
+                    b.HasOne("Blog_Server.Database.Entities.BlogPost", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -136,12 +141,12 @@ namespace Blog_Server.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Blog_Server.Models.Database.Entities.BlogPost", b =>
+            modelBuilder.Entity("Blog_Server.Database.Entities.BlogPost", b =>
                 {
                     b.Navigation("Comments");
                 });
 
-            modelBuilder.Entity("Blog_Server.Models.Database.Entities.User", b =>
+            modelBuilder.Entity("Blog_Server.Database.Entities.User", b =>
                 {
                     b.Navigation("BlogPosts");
                 });
