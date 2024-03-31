@@ -1,24 +1,15 @@
 using Blog_Server.Controllers;
-using Blog_Server.Database.Entities;
 using Blog_Server.Interfaces.Services;
 using Blog_Server.Models.DtoModels;
 using Blog_Server.Models.RequestModels;
 using Blog_Server.Models.ResponseModels;
 using BlogTests.MockData;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Controller;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http.Json;
 using System.Security.Claims;
-using Xunit;
+
 namespace BlogTests
 {
     public class PostsControllerTests

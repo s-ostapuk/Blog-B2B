@@ -1,18 +1,16 @@
 using Blog_Server.Controllers;
 using Blog_Server.Interfaces.Services;
 using Blog_Server.Models.AuthModels;
-using Blog_Server.Models.JwtModels;
 using Blog_Server.Models.ResponseModels;
-using Blog_Server.Services;
 using BlogTests.MockData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using Moq;
 
 namespace BlogTests
 {
