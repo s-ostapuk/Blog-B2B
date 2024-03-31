@@ -36,8 +36,6 @@ namespace Blog_Server.Services
         #region Public methods
         public async Task<BaseResponseModel> GetTokenAsync(AuthRequestModel requestModel)
         {
-            var response = new BaseResponseModel();
-
             var user = await _unitOfWork.UsersRepository.GetUserByLoginAsync(requestModel.Login);
             
             if (user is null || !CheckUserPassword(requestModel.Password, user))
@@ -55,6 +53,7 @@ namespace Blog_Server.Services
                 claims: claimsIdentity.Claims, expires: now.AddSeconds(_jwtOptions.ExpirationSeconds),
                 signingCredentials: issuerSigningCredentials);
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+
 
             return new BaseResponseModel() { Data = new AuthResponseDataModel { AccessToken = encodedJwt } };
         }

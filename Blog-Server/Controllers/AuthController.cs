@@ -17,7 +17,7 @@ namespace Blog_Server.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponseModel> GetTokenAsync([FromBody] AuthRequestModel requestModel)
+        public async Task<BaseResponseModel> GetToken([FromBody] AuthRequestModel requestModel)
         {
             return await _authService.GetTokenAsync(requestModel);
         }
