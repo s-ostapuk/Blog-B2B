@@ -1,0 +1,1 @@
+ EXEC dbo.FetchLoanTableWithRecycle 36000;

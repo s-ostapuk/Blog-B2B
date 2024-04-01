@@ -26,7 +26,11 @@ const HomePage = () => {
     }
 
     if (!loading && (!blogPosts || blogPosts.length === 0)) {
-        return <p>No blog posts available.</p>;
+        return (<div>
+             <p>No blog posts available.</p>;
+             <a href="post/create">Create post</a>
+        </div>)
+            
     }
     if (isAuthenticated) {
         return (

@@ -17,7 +17,7 @@ const PostComments = ({ comment}) => {
         console.log(data);
         if (data.isSuccess) {
           navigateTo(`/post/${comment.postId}/details`);
-          window.location.reload();
+         window.location.reload();
         }
         else {
           setMessage(data.errors[0])

@@ -91,22 +91,18 @@ const LoginPage = () => {
         <div className="login-page">
         
             <h2>Login</h2>
-            <label>
                 <input
                     type="text"
                     value={login}
                     onChange={handleLoginChange}
                     placeholder='Username'
                 />
-            </label>
-            <label>
                 <input
                     type="password"
                     value={password}
                     onChange={handlePasswordChange}
                     placeholder='Password'
                 />
-            </label>
             <p>{error}</p>
             <button onClick={handleLoginClick}>Login</button>
             <button onClick={handleRegisterClick}>

@@ -94,22 +94,18 @@ const PostUpdatePage = () => {
     
             <div className="post-page">
                 <h2>Post Edit</h2>
-                <label>
                     <input
                         type="text"
                         value={title}
                         onChange={handleTitleChange}
                         placeholder='Title'
                     />
-                </label>
-                <label>
                     <input
                         type="text"
                         value={content}
                         onChange={handleContentChange}
                         placeholder='Content'
                     />
-                </label>
                 <p>{error}</p>
                 <button onClick={handleSubmitClick}>Submit</button>
             </div>
