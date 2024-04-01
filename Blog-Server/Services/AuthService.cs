@@ -10,6 +10,8 @@ using Blog_Server.Models.ResponseModels;
 using Blog_Server.Interfaces.UnitOfWork;
 using Blog_Server.Database.Entities;
 using Blog_Server.Exceptions;
+using AutoMapper;
+using Blog_Server.Models.DtoModels;
 
 namespace Blog_Server.Services
 {
@@ -18,16 +20,17 @@ namespace Blog_Server.Services
         #region Properties
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtOptions _jwtOptions;
+        private readonly IMapper _mapper;
 
         private SigningCredentials issuerSigningCredentials;
         #endregion
 
         #region Constructors
-        public AuthService(IUnitOfWork unitOfWork, JwtOptions jwtOptions)
+        public AuthService(IUnitOfWork unitOfWork, JwtOptions jwtOptions, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _jwtOptions = jwtOptions;
-
+            _mapper = mapper;
             issuerSigningCredentials = new SigningCredentials(new SymmetricSecurityKey(
                                 Encoding.UTF8.GetBytes(_jwtOptions.SigningKey)), SecurityAlgorithms.HmacSha256);
         }
@@ -55,7 +58,7 @@ namespace Blog_Server.Services
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
 
-            return new BaseResponseModel() { Data = new AuthResponseDataModel { AccessToken = encodedJwt } };
+            return new BaseResponseModel() { Data = new AuthResponseDataModel { AccessToken = encodedJwt, UserInfo = _mapper.Map<UserDto>(user) } };
         }
 
         public async Task<BaseResponseModel> RegisterNewUserAsync(AuthSignUpRequestModel requestModel)

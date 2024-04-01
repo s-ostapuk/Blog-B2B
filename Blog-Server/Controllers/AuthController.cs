@@ -1,6 +1,7 @@
 ﻿using Blog_Server.Interfaces.Services;
 using Blog_Server.Models.AuthModels;
 using Blog_Server.Models.ResponseModels;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog_Server.Controllers

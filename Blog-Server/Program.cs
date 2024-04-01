@@ -54,6 +54,17 @@ builder.Services.AddTransient<IPostsService, PostsService>();
 builder.Services.AddTransient<ICommentsService, CommentsService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        });
+});
 var app = builder.Build();
 app.UseExceptionHandler(builder =>
 {
@@ -68,7 +79,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<HttpLoggingMiddleware>();
 app.UseHttpsRedirection();
-
+app.UseCors("AllowAllOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
