@@ -1,0 +1,27 @@
+version: "3.9"  # optional since v1.27.0
+networks:
+  myappnetwork:
+    name: myappnetwork
+services:
+  web_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ostapuksv/blogserver:v1.0
+    container_name: Blog-Server
+    ports:
+      - "7299:8080"
+    networks:
+      - myappnetwork
+    links:
+      - db
+  db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: sql_server2022
+    ports: # not actually needed, because the two services are on the same network
+      - "1433:1433" 
+    networks:
+      - myappnetwork
+    environment:
+      - ACCEPT_EULA=y
+      - SA_PASSWORD=qwerty123456!Q
