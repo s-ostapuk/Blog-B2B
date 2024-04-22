@@ -3,7 +3,7 @@ import axios from 'axios';
 const getAllPosts = async () => {
   try {
   
-    const response = await axios.get('https://localhost:7299/api/posts');
+    const response = await axios.get('http://localhost:5000/api/posts');
     return response.data.data.blogPosts;
   } catch (e) {
     console.log(e.message);
@@ -13,7 +13,7 @@ const getAllPosts = async () => {
 
 const getPostById = async (postId) => {
   try {
-    const response = await axios.get(`https://localhost:7299/api/posts/${postId}`);
+    const response = await axios.get(`http://localhost:5000/api/posts/${postId}`);
     return response.data;
   } catch (e) {
     console.log(e.message);
@@ -28,7 +28,7 @@ const createNewPost = async (requestModel) => {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
     };
-    const response = await axios.post(`https://localhost:7299/api/posts/create`, requestModel.requestModel, config);
+    const response = await axios.post(`http://localhost:5000/api/posts/create`, requestModel.requestModel, config);
     return response.data;
   } catch (e) {
 
@@ -44,7 +44,7 @@ const updatePost = async (data) => {
       },
     };
   
-    const response = await axios.put(`https://localhost:7299/api/posts/${data.postId}`, data.requestModel ,config);
+    const response = await axios.put(`http://localhost:5000/api/posts/${data.postId}`, data.requestModel ,config);
     return response.data;
   } catch (e) {
 
@@ -60,7 +60,7 @@ const deletePost = async (postId) => {
       },
     };
   
-    const response = await axios.delete(`https://localhost:7299/api/posts/${postId}`,config);
+    const response = await axios.delete(`http://localhost:5000/api/posts/${postId}`,config);
     return response.data;
   } catch (e) {
     console.log(e.message);
@@ -70,7 +70,7 @@ const deletePost = async (postId) => {
 
 const getCommentsByPostId = async (postId) => {
   try {
-    const response = await axios.get(`https://localhost:7299/api/posts/${postId}/comments`);
+    const response = await axios.get(`http://localhost:5000/api/posts/${postId}/comments`);
     return response.data;
   } catch (e) {
     console.log(e.message);
@@ -85,7 +85,7 @@ const createNewPostComment = async (data) => {
       },
     };
     
-    const response = await axios.post(`https://localhost:7299/api/posts/${data.postId}/comments/create`, data.requestModel ,config);
+    const response = await axios.post(`http://localhost:5000/api/posts/${data.postId}/comments/create`, data.requestModel ,config);
     return response.data;
   } catch (e) {
 
@@ -100,7 +100,7 @@ const updatePostComment = async (data) => {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
     };
-    const response = await axios.put(`https://localhost:7299/api/posts/${data.postId}/comments/${data.commentId}`, data.requestModel, config);
+    const response = await axios.put(`http://localhost:5000/api/posts/${data.postId}/comments/${data.commentId}`, data.requestModel, config);
     return response.data;
   } catch (e) {
    
@@ -115,7 +115,7 @@ const DeletePostComment = async (comment) => {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
     };
-    const response = await axios.delete(`https://localhost:7299/api/posts/${comment.comment.postId}/comments/${comment.comment.id}`,config);
+    const response = await axios.delete(`http://localhost:5000/api/posts/${comment.comment.postId}/comments/${comment.comment.id}`,config);
     return response.data;
   } catch (e) {
    

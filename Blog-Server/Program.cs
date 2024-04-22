@@ -66,6 +66,14 @@ builder.Services.AddCors(options =>
         });
 });
 var app = builder.Build();
+
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider
+    .GetRequiredService<ApplicationDbContext>();
+
+// Here is the migration executed
+dbContext.Database.EnsureCreated();
+
 app.UseExceptionHandler(builder =>
 {
 
